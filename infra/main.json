@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.34.44.8038",
-      "templateHash": "9222373002840611376"
+      "templateHash": "6044762727512343027"
     }
   },
   "parameters": {
@@ -128,7 +128,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.34.44.8038",
-              "templateHash": "16198377001445026545"
+              "templateHash": "8811836644623139620"
             }
           },
           "parameters": {
@@ -136,6 +136,13 @@
               "type": "string",
               "metadata": {
                 "description": "Name of the VNet in West US"
+              }
+            },
+            "westlocation": {
+              "type": "string",
+              "defaultValue": "westus",
+              "metadata": {
+                "description": "Name of resrouce location for the VNet"
               }
             },
             "subnet1Name": {
@@ -156,7 +163,7 @@
               "type": "Microsoft.Network/virtualNetworks",
               "apiVersion": "2022-11-01",
               "name": "[parameters('vnetWestName')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('westlocation')]",
               "properties": {
                 "addressSpace": {
                   "addressPrefixes": [

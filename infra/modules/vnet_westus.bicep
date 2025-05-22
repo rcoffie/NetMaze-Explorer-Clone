@@ -2,7 +2,7 @@
 param vnetWestName string
 
 @description('Name of resrouce location for the VNet')
-param location string =  'westus'
+param westlocation string =  'westus'
 
 @description('Name for subnet 1')
 param subnet1Name string
@@ -12,7 +12,7 @@ param subnet1Prefix string
 
 resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
   name: vnetWestName
-  location: resourceGroup().location
+  location: westlocation
   properties: {
     addressSpace: {
       addressPrefixes: [
