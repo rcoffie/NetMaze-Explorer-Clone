@@ -1,6 +1,9 @@
 @description('Name of the VNet in West US')
 param vnetWestName string
 
+@description('Name of resrouce location for the VNet')
+param location string =  'westus'
+
 @description('Name for subnet 1')
 param subnet1Name string
 
