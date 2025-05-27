@@ -4,18 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.34.44.8038",
-      "templateHash": "6044762727512343027"
-    }
-  },
-  "parameters": {
-    "vnetEastName": {
-      "type": "string",
-      "defaultValue": "vnetEast"
-    },
-    "vnetWestName": {
-      "type": "string",
-      "defaultValue": "vnetWest"
+      "version": "0.35.1.17967",
+      "templateHash": "10776805734316069179"
     }
   },
   "resources": [
@@ -28,74 +18,96 @@
           "scope": "inner"
         },
         "mode": "Incremental",
-        "parameters": {
-          "vnetEastName": {
-            "value": "[parameters('vnetEastName')]"
-          },
-          "subnet1Name": {
-            "value": "webAppSubnet"
-          },
-          "subnet1Prefix": {
-            "value": "10.0.1.0/24"
-          }
-        },
+        "parameters": {},
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.34.44.8038",
-              "templateHash": "16774339595778111211"
+              "version": "0.35.1.17967",
+              "templateHash": "6737293200834102303"
             }
           },
           "parameters": {
-            "vnetEastName": {
+            "location": {
               "type": "string",
-              "metadata": {
-                "description": "Name of the VNet in East US"
-              }
+              "defaultValue": "[resourceGroup().location]"
             },
-            "subnet1Name": {
+            "vnetName": {
               "type": "string",
-              "metadata": {
-                "description": "Name for subnet 1"
-              }
+              "defaultValue": "myVnet"
             },
-            "subnet1Prefix": {
+            "addressSpace": {
               "type": "string",
-              "metadata": {
-                "description": "Prefix for subnet 1"
-              }
+              "defaultValue": "10.0.0.0/16"
+            },
+            "webAppSubnetName": {
+              "type": "string",
+              "defaultValue": "webAppSubnet"
+            },
+            "webSubnetPrfix": {
+              "type": "string",
+              "defaultValue": "10.0.1.0/24"
+            },
+            "gatewaySubnetName": {
+              "type": "string",
+              "defaultValue": "GatewaySubnet"
+            },
+            "gatewaySubnetPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.2.0/16"
             }
           },
           "resources": [
             {
               "type": "Microsoft.Network/virtualNetworks",
-              "apiVersion": "2022-11-01",
-              "name": "[parameters('vnetEastName')]",
-              "location": "[resourceGroup().location]",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('vnetName')]",
+              "location": "[parameters('location')]",
               "properties": {
                 "addressSpace": {
                   "addressPrefixes": [
-                    "10.0.0.0/16"
+                    "[parameters('addressSpace')]"
                   ]
-                },
-                "subnets": [
-                  {
-                    "name": "[parameters('subnet1Name')]",
-                    "properties": {
-                      "addressPrefix": "[parameters('subnet1Prefix')]"
-                    }
-                  }
-                ]
+                }
               }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('webAppSubnetName')]",
+              "properties": {
+                "addressPrefix": "[parameters('webSubnetPrfix')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2023-04-01",
+              "name": "[parameters('gatewaySubnetName')]",
+              "properties": {
+                "addressPrefix": "[parameters('gatewaySubnetPrefix')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+              ]
             }
           ],
           "outputs": {
             "vnetResourceId": {
               "type": "string",
-              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetEastName'))]"
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+            },
+            "webAppSubnetid": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('webAppSubnetName'), '/')[0], split(parameters('webAppSubnetName'), '/')[1])]"
+            },
+            "gatewaySubnetid": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('gatewaySubnetName'), '/')[0], split(parameters('gatewaySubnetName'), '/')[1])]"
             }
           }
         }
@@ -110,95 +122,77 @@
           "scope": "inner"
         },
         "mode": "Incremental",
-        "parameters": {
-          "vnetWestName": {
-            "value": "[parameters('vnetWestName')]"
-          },
-          "subnet1Name": {
-            "value": "defaultSubnet"
-          },
-          "subnet1Prefix": {
-            "value": "10.1.1.0/24"
-          }
-        },
+        "parameters": {},
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.34.44.8038",
-              "templateHash": "8811836644623139620"
+              "version": "0.35.1.17967",
+              "templateHash": "2583306568886871908"
             }
           },
           "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "eastus"
+            },
+            "addressSapace": {
+              "type": "string",
+              "defaultValue": "10.0.0.0/16"
+            },
+            "defaultSubnetName": {
+              "type": "string",
+              "defaultValue": "defaultSubnet"
+            },
+            "defaultSubnetPrefix": {
+              "type": "string",
+              "defaultValue": "10.0.0.1/16"
+            },
             "vnetWestName": {
               "type": "string",
-              "metadata": {
-                "description": "Name of the VNet in West US"
-              }
-            },
-            "westlocation": {
-              "type": "string",
-              "defaultValue": "westus",
-              "metadata": {
-                "description": "Name of resrouce location for the VNet"
-              }
-            },
-            "subnet1Name": {
-              "type": "string",
-              "metadata": {
-                "description": "Name for subnet 1"
-              }
-            },
-            "subnet1Prefix": {
-              "type": "string",
-              "metadata": {
-                "description": "Prefix for subnet 1"
-              }
+              "defaultValue": "vnetWest"
             }
           },
           "resources": [
             {
               "type": "Microsoft.Network/virtualNetworks",
-              "apiVersion": "2022-11-01",
+              "apiVersion": "2019-11-01",
               "name": "[parameters('vnetWestName')]",
-              "location": "[parameters('westlocation')]",
+              "location": "[parameters('location')]",
               "properties": {
                 "addressSpace": {
                   "addressPrefixes": [
-                    "10.1.0.0/16"
+                    "[parameters('addressSapace')]"
                   ]
-                },
-                "subnets": [
-                  {
-                    "name": "[parameters('subnet1Name')]",
-                    "properties": {
-                      "addressPrefix": "[parameters('subnet1Prefix')]"
-                    }
-                  }
-                ]
+                }
               }
+            },
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets",
+              "apiVersion": "2024-05-01",
+              "name": "[parameters('defaultSubnetName')]",
+              "properties": {
+                "addressPrefix": "[parameters('defaultSubnetPrefix')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetWestName'))]"
+              ]
             }
           ],
           "outputs": {
-            "vnetResourceId": {
+            "vnetWestid": {
               "type": "string",
               "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetWestName'))]"
+            },
+            "defaultSubnet": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', split(parameters('defaultSubnetName'), '/')[0], split(parameters('defaultSubnetName'), '/')[1])]"
             }
           }
         }
       }
     }
-  ],
-  "outputs": {
-    "eastVnetId": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnetEastDeployment'), '2022-09-01').outputs.vnetResourceId.value]"
-    },
-    "westVnetId": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'vnetWestDeployment'), '2022-09-01').outputs.vnetResourceId.value]"
-    }
-  }
+  ]
 }

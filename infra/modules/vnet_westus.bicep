@@ -1,33 +1,31 @@
-@description('Name of the VNet in West US')
-param vnetWestName string
+param location string = 'eastus'
+param addressSapace string = '10.0.0.0/16'
+param defaultSubnetName string = 'defaultSubnet'
+param defaultSubnetPrefix string = '10.0.0.1/16'
+param vnetWestName string = 'vnetWest'
 
-@description('Name of resrouce location for the VNet')
-param westlocation string =  'westus'
 
-@description('Name for subnet 1')
-param subnet1Name string
 
-@description('Prefix for subnet 1')
-param subnet1Prefix string
-
-resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
+resource vnetWest 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: vnetWestName
-  location: westlocation
+  location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        '10.1.0.0/16'
+        addressSapace
       ]
     }
-    subnets: [
-      {
-        name: subnet1Name
-        properties: {
-          addressPrefix: subnet1Prefix
-        }
-      }
-    ]
+
   }
 }
 
-output vnetResourceId string = vnet.id
+resource defaultSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' = {
+   name: defaultSubnetName
+   properties: {addressPrefix: defaultSubnetPrefix }
+   dependsOn:[
+    vnetWest
+   ]
+}
+
+output vnetWestid string = vnetWest.id
+output defaultSubnet string = defaultSubnet.id

@@ -1,30 +1,46 @@
-@description('Name of the VNet in East US')
-param vnetEastName string
+param location string = resourceGroup().location
+param vnetName string = 'myVnet'
+param addressSpace string = '10.0.0.0/16'
+param webAppSubnetName string = 'webAppSubnet'
+param webSubnetPrfix string = '10.0.1.0/24'
+param gatewaySubnetName string = 'GatewaySubnet'
+param gatewaySubnetPrefix  string = '10.0.2.0/16'
 
-@description('Name for subnet 1')
-param subnet1Name string
-
-@description('Prefix for subnet 1')
-param subnet1Prefix string
-
-resource vnet 'Microsoft.Network/virtualNetworks@2022-11-01' = {
-  name: vnetEastName
-  location: resourceGroup().location
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' = {
+  name: vnetName
+  location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        '10.0.0.0/16'
+        addressSpace
       ]
     }
-    subnets: [
-      {
-        name: subnet1Name
-        properties: {
-          addressPrefix: subnet1Prefix
-        }
-      }
-    ]
   }
 }
 
+resource webAppsubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
+  name: webAppSubnetName
+  properties: {
+    addressPrefix: webSubnetPrfix
+  }
+  dependsOn: [
+    vnet
+  ]
+}
+
+resource gatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2023-04-01' = {
+  name: gatewaySubnetName
+  properties: {
+    addressPrefix: gatewaySubnetPrefix
+  }
+  dependsOn: [
+    vnet
+  ]
+}
+
+
+
+
 output vnetResourceId string = vnet.id
+output webAppSubnetid string = webAppsubnet.id
+output gatewaySubnetid string = gatewaySubnet.id
